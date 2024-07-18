@@ -48,5 +48,23 @@ namespace library_management.Models
             return input;
         }
 
+        public static string Header(string title)
+        {
+            const int maxWidth = 95;
+            
+            string LineSeprator = new('#', maxWidth);
+
+            var titleLength = title.Length % 2 == 0 ? title.Length : title.Length + 1;
+            var paddedTitle = title.PadLeft(titleLength, ' ');
+
+            var spacesCount = (maxWidth - titleLength) / 2 - 1;
+            string spaceInTitle = new(' ', spacesCount);
+
+            string titleLine = $"#{spaceInTitle}{paddedTitle}{spaceInTitle}#";
+            string header = $"{LineSeprator}\n{titleLine}\n{LineSeprator}";
+
+            return header;
+        }
+
     }
 }
