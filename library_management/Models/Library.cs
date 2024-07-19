@@ -8,7 +8,7 @@ namespace library_management.Models
     public class Library
     {
         public int Id { get; set; }
-        public required List<Book> Books { get; set; }
+        public required List<Book> Books { get; set; } = new List<Book>();
 
         public List<Book> SearchGender(string gender)
         {
@@ -31,7 +31,7 @@ namespace library_management.Models
             return booksInYearRange.Any() ? booksInYearRange : new List<Book>();
         }
 
-        public void AddBook(Book book)
+        public void AddBook()
         {
             string newBookTitle = Setting.InputString("Enter the title of the new book: ");
             string newBookAuthor = Setting.InputString("Enter the author of the new book: ");
