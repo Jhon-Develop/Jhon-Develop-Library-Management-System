@@ -97,7 +97,7 @@ public class Program
                     switch(searchOption)
                     {
                         case 1:
-                            //library.SearchBooks();
+                            library.AdvancedSearch(library);
                             break;
                         case 2:
                             string gender = Setting.InputString("Enter the gender to search by: ");

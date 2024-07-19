@@ -15,6 +15,7 @@ namespace library_management.Models
             var booksByGender = Books.Where(book => book.Gender.Equals(gender, StringComparison.OrdinalIgnoreCase)).ToList();
 
             return booksByGender.Count != 0 ? booksByGender : new List<Book>();
+
         }
 
         public List<Book> SearchAuthor(string author)
@@ -29,6 +30,25 @@ namespace library_management.Models
             var booksInYearRange = Books.Where(book => book.PublishedOn >= startYear && book.PublishedOn <= endYear).ToList();
 
             return booksInYearRange.Any() ? booksInYearRange : new List<Book>();
+        }
+
+        public void PrintBooks(List<Book> books)
+        {
+            string bookLineSeparator = new('-', Console.WindowWidth);
+            if (books.Any())
+            {
+                Console.WriteLine("Books found:");
+                Console.WriteLine(bookLineSeparator);
+                foreach (var book in books)
+                {
+                    Console.WriteLine($"{book.Title, -40} | {book.Isbn, -20} | {book.Author, -25} | {book.Gender, -15} | {book.PublishedOn, -15} | {book.Price, -10} | {book.DiscountRate, -10}");
+                }
+                Console.WriteLine("");
+            }
+            else
+            {
+                Console.WriteLine("No books found matching the criteria.");
+            }
         }
 
         public void AddBook()
@@ -72,84 +92,69 @@ namespace library_management.Models
             Setting.FinishOption();
         }
 
-        public void SearhBooks(string gender, string author, string title, int publishedOn, double price, int discountRate)
+        public void SearchBooks(string gender, string author, string title, int publishedOn, double price, int discountRate)
         {
-            var booksByGender = Books.Where(book => book.Gender.Equals(gender, StringComparison.OrdinalIgnoreCase)).ToList();
-            var booksByAuthor = Books.Where(book => book.Author.Equals(author, StringComparison.OrdinalIgnoreCase)).ToList();
-            var booksByTitle = Books.Where(book => book.Title.Equals(title, StringComparison.OrdinalIgnoreCase)).ToList();
-            var booksInYearRange = Books.Where(book => book.PublishedOn >= publishedOn && book.PublishedOn <= publishedOn).ToList();
-            var booksByPrice = Books.Where(book => book.Price >= price).ToList();
-            var booksByDiscountRate = Books.Where(book => book.DiscountRate >= discountRate).ToList();
+            var filteredBooks = Books.AsEnumerable();
 
-            Console.WriteLine("Books found:");
-            Console.WriteLine("-------------");
-
-            if (booksByGender.Any())
+            if (!string.IsNullOrEmpty(gender))
             {
-                Console.WriteLine("Books by gender:");
-                Console.WriteLine("----------------");
-                foreach (var book in booksByGender)
+                filteredBooks = filteredBooks.Where(book => book.Gender.Equals(gender, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrEmpty(author))
+            {
+                filteredBooks = filteredBooks.Where(book => book.Author.Equals(author, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrEmpty(title))
+            {
+                filteredBooks = filteredBooks.Where(book => book.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (publishedOn > 0)
+            {
+                filteredBooks = filteredBooks.Where(book => book.PublishedOn == publishedOn);
+            }
+
+            if (price > 0)
+            {
+                filteredBooks = filteredBooks.Where(book => book.Price >= price);
+            }
+
+            if (discountRate > 0)
+            {
+                filteredBooks = filteredBooks.Where(book => book.DiscountRate >= discountRate);
+            }
+
+            var booksList = filteredBooks.ToList();
+
+            if (booksList.Any())
+            {
+                Console.WriteLine("Books found:");
+                Console.WriteLine("-------------");
+                foreach (var book in booksList)
                 {
-                    Console.WriteLine($"{book.Title} - {book.Author} - {book.PublishedOn} - {book.Price} - {book.DiscountRate}");
+                    Console.WriteLine($"{book.Title,-40} | {book.Isbn,-20} | {book.Author,-25} | {book.Gender,-15} | {book.PublishedOn,-15} | {book.Price,-10} | {book.DiscountRate,-10}");
                 }
                 Console.WriteLine("");
             }
-
-            if (booksByAuthor.Any())
+            else
             {
-                Console.WriteLine("Books by author:");
-                Console.WriteLine("----------------");
-                foreach (var book in booksByAuthor)
-                {
-                    Console.WriteLine($"{book.Title} - {book.Author} - {book.PublishedOn} - {book.Price} - {book.DiscountRate}");
-                }
-                Console.WriteLine("");
-            }
-
-            if (booksByTitle.Any())
-            {
-                Console.WriteLine("Books by title:");
-                Console.WriteLine("----------------");
-                foreach (var book in booksByTitle)
-                {
-                    Console.WriteLine($"{book.Title} - {book.Author} - {book.PublishedOn} - {book.Price} - {book.DiscountRate}");
-                }
-                Console.WriteLine("");
-            }
-
-            if (booksInYearRange.Any())
-            {
-                Console.WriteLine("Books in year range:");
-                Console.WriteLine("--------------------");
-                foreach (var book in booksInYearRange)
-                {
-                    Console.WriteLine($"{book.Title} - {book.Author} - {book.PublishedOn} - {book.Price} - {book.DiscountRate}");
-                }
-                Console.WriteLine("");
-            }
-
-            if (booksByPrice.Any())
-            {
-                Console.WriteLine("Books by price:");
-                Console.WriteLine("---------------");
-                foreach (var book in booksByPrice)
-                {
-                    Console.WriteLine($"{book.Title} - {book.Author} - {book.PublishedOn} - {book.Price} - {book.DiscountRate}");
-                }
-                Console.WriteLine("");
-            }
-
-            if (booksByDiscountRate.Any())
-            {
-                Console.WriteLine("Books by discount rate:");
-                Console.WriteLine("-----------------------");
-                foreach (var book in booksByDiscountRate)
-                {
-                    Console.WriteLine($"{book.Title} - {book.Author} - {book.PublishedOn} - {book.Price} - {book.DiscountRate}");
-                }
-                Console.WriteLine("");
+                Console.WriteLine("No books found matching the criteria.");
             }
         }
+        public void AdvancedSearch(Library library)
+        {
+            string gender = Setting.InputString("Enter gender (or leave empty): ");
+            string author = Setting.InputString("Enter author (or leave empty): ");
+            string title = Setting.InputString("Enter title (or leave empty): ");
+            int publishedOn = Setting.InputInt("Enter published year (or 0 to skip): ");
+            double price = Setting.InputDouble("Enter minimum price (or 0 to skip): ");
+            int discountRate = Setting.InputInt("Enter minimum discount rate (or 0 to skip): ");
+
+            library.SearchBooks(gender, author, title, publishedOn, price, discountRate);
+        }
+
 
 
     }
