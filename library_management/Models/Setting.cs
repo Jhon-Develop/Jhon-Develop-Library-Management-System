@@ -50,7 +50,7 @@ namespace library_management.Models
 
         public static string Header(string title)
         {
-            const int maxWidth = 95;
+            const int maxWidth = 160;
             
             string LineSeprator = new('#', maxWidth);
 
