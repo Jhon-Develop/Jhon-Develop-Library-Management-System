@@ -50,7 +50,7 @@ namespace library_management.Models
 
             Setting.FinishOption();
         }
-        public void RemoveBook(int bookId)
+        public void RemoveBook()
         {
             string bookTitle = Setting.InputString("Enter the title of the book to remove: ");
 

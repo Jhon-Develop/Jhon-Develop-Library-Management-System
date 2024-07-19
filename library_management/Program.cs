@@ -71,18 +71,67 @@ public class Program
             1. Add book.
             2. Remove book.
             3. Search books.
-            4. Exit.
+            4. Show all books.
+            5. Exit.
             ");
             int option = Setting.InputInt("Enter your option => ");
             switch (option)
             {
                 case 1:
+                    Console.WriteLine($"{Setting.Header("Add Book")}");
+                    library.AddBook();
                     break;
                 case 2:
+                    Console.WriteLine($"{Setting.Header("Remove Book")}");
+                    library.RemoveBook();
                     break;
                 case 3:
+                    Console.WriteLine($"{Setting.Header("Search Books")}");
+                    Console.WriteLine(@$"
+                    1. Auto search.
+                    2. Search by gender.
+                    3. Search by author.
+                    4. Search by year range.
+                    ");
+                    int searchOption = Setting.InputInt("Enter your search option => ");
+                    switch(searchOption)
+                    {
+                        case 1:
+                            //library.SearchBooks();
+                            break;
+                        case 2:
+                            string gender = Setting.InputString("Enter the gender to search by: ");
+                            library.SearchGender(gender);
+                            break;
+                        case 3:
+                            string author = Setting.InputString("Enter the author to search by: ");
+                            library.SearchAuthor(author);
+                            break;
+                        case 4:
+                            int startYear = Setting.InputInt("Enter the start year to search by: ");
+                            int endYear = Setting.InputInt("Enter the end year to search by: ");
+                            library.SearchYearRange(startYear, endYear);
+                            break;
+                        default:
+                            Console.WriteLine("Invalid option.");
+                            break;
+                    }
                     break;
                 case 4:
+                    Console.WriteLine($"{Setting.Header("Show All Books")}");
+                    Console.WriteLine("");
+
+                    string bookLineSeparator = new('-', 160);
+                    Console.WriteLine($"{"Name", -40} | {"ISBN", -20} | {"Author", -25} | {"Genre", -15} | {"Publish Year", -15} | {"Price", -10} | {"Discount Rate", -10}");
+                    Console.WriteLine(bookLineSeparator);
+
+                    foreach (var book in library.Books)
+                    {
+                        Console.WriteLine($"{book.Title, -40} | {book.Isbn, -20} | {book.Author, -25} | {book.Gender, -15} | {book.PublishedOn, -15} | {book.Price, -10} | {book.DiscountRate, -10}");
+                        Console.WriteLine(bookLineSeparator);
+                    }
+                    break;
+                case 5:
                     menuOpen = false;
                     break;
                 default:
